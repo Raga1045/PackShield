@@ -1,19 +1,16 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./Layout.css";
-import walmartLogo from "../assets/walmart.png";
-import { FaHome, FaBarcode, FaBoxes, FaBell } from "react-icons/fa";
+import { FaHome, FaBarcode, FaBoxes, FaBell, FaShieldAlt } from "react-icons/fa";
 
 const Layout = ({ children }) => {
   return (
     <div className="layout">
       <aside className="sidebar">
-        <img
-          src={walmartLogo}
-          alt="Walmart Logo"
-          className="logo"
-          style={{ width: "200px", height: "60px" }} // increase width as needed
-        />
+        <div className="brand-logo-container">
+          <FaShieldAlt className="brand-icon-shield" />
+          <span className="brand-name">PackShield</span>
+        </div>
 
         <nav>
           <NavLink exact="true" to="/" activeclassname="active-link">

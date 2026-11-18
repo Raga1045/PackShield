@@ -15,5 +15,5 @@ app = create_app()
 if __name__ == "__main__":
     port = config.PORT
     debug = config.DEBUG
-    print(f"🚀 DefektGuard Backend running on http://0.0.0.0:{port} (debug={debug})")
+    print(f"🚀 PackShield Backend running on http://0.0.0.0:{port} (debug={debug})")
     app.run(host="0.0.0.0", port=port, debug=debug)
