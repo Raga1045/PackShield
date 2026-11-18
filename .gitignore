@@ -1,0 +1,54 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# TensorFlow & Model Weights (Large binary weights excluded from git)
+*.h5
+*.keras
+*.tflite
+*.pb
+/backend/model/*.h5
+/backend/model/*.keras
+/backend/model/variables/
+/backend/model/assets/
+.keras/
+
+# DefektGuard Run-time Data & Reports
+/backend/data/
+/backend/reports/*.png
+/backend/reports/*.json
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+build/
+frontend/build/
+dist/
+.pnp
+.pnp.js
+coverage/
+.nyc_output
+
+# Environment & IDE
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes

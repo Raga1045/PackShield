@@ -1,0 +1,11 @@
+# DefektGuard Backend Dependencies
+flask>=1.1.2,<3.0.0
+flask-cors>=4.0.0
+tensorflow>=2.15.0
+numpy>=1.23.0,<2.0.0
+pillow>=9.4.0
+matplotlib>=3.6.0
+werkzeug>=1.0.1
+# Optional for MongoDB production storage
+# pymongo>=4.0.0
+
