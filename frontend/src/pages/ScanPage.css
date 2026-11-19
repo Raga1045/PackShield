@@ -318,6 +318,10 @@
   color: #38a169;
 }
 
+.trustworthy-result-container.out_of_distribution .status-tag-large {
+  color: #d97706;
+}
+
 .metric-value {
   font-size: 1.25rem;
   font-weight: 700;

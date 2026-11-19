@@ -11,7 +11,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from ml.resnet34 import build_resnet34
 from ml.gradcam import compute_gradcam_heatmap, generate_gradcam_overlay, find_target_conv_layer
-from ml.uncertainty import compute_predictive_entropy, compute_mc_dropout, quantify_uncertainty
+from ml.uncertainty import (
+    compute_predictive_entropy,
+    compute_mc_dropout,
+    quantify_uncertainty,
+    compute_energy_score,
+    verify_packaging_domain,
+)
 from ml.triage import evaluate_triage
 
 
@@ -110,6 +116,53 @@ class TestTrustworthyAIComponents(unittest.TestCase):
         )
         self.assertEqual(triage["triage_status"], "FLAGGED_FOR_HUMAN_REVIEW")
         self.assertTrue(triage["requires_human_review"])
+
+    def test_compute_energy_score(self):
+        # Saturated distribution has lower energy magnitude
+        energy_sat = compute_energy_score(np.array([0.999, 0.001]), temperature=2.0)
+        energy_unif = compute_energy_score(np.array([0.5, 0.5]), temperature=2.0)
+        self.assertIsInstance(energy_sat, float)
+        self.assertIsInstance(energy_unif, float)
+        self.assertLess(energy_unif, energy_sat)
+
+    def test_packaging_domain_verification_in_distribution(self):
+        # Brown kraft box color tensor (200, 150, 100)
+        kraft_tensor = np.full((1, 64, 64, 3), [200.0/255.0, 150.0/255.0, 100.0/255.0], dtype=np.float32)
+        is_ood, reason, metrics = verify_packaging_domain(kraft_tensor)
+        self.assertFalse(is_ood)
+        self.assertIsNone(reason)
+        self.assertGreater(metrics["kraft_ratio"], 0.80)
+
+        # White shipping carton color tensor (235, 235, 230)
+        white_carton = np.full((1, 64, 64, 3), [235.0/255.0, 235.0/255.0, 230.0/255.0], dtype=np.float32)
+        is_ood, reason, metrics = verify_packaging_domain(white_carton)
+        self.assertFalse(is_ood)
+        self.assertIsNone(reason)
+
+    def test_packaging_domain_verification_ood_rejection(self):
+        # Outdoor foliage / greenery (40, 180, 40)
+        green_tensor = np.full((1, 64, 64, 3), [40.0/255.0, 180.0/255.0, 40.0/255.0], dtype=np.float32)
+        is_ood, reason, metrics = verify_packaging_domain(green_tensor)
+        self.assertTrue(is_ood)
+        self.assertIn("foliage", reason.lower())
+
+        # Cool synthetic sky / screen (50, 120, 230)
+        sky_tensor = np.full((1, 64, 64, 3), [50.0/255.0, 120.0/255.0, 230.0/255.0], dtype=np.float32)
+        is_ood, reason, metrics = verify_packaging_domain(sky_tensor)
+        self.assertTrue(is_ood)
+
+    def test_triage_ood_rejection(self):
+        triage = evaluate_triage(
+            label="OUT_OF_DISTRIBUTION",
+            confidence=0.0,
+            uncertainty_score=1.0,
+            is_ood=True,
+            ood_reason="Human portrait / non-packaging object detected",
+        )
+        self.assertEqual(triage["triage_status"], "FLAGGED_FOR_HUMAN_REVIEW")
+        self.assertTrue(triage["requires_human_review"])
+        self.assertEqual(triage["action"], "OUT_OF_DISTRIBUTION_REJECTED")
+        self.assertIn("Out-of-Distribution Anomaly", triage["explanation"])
 
 
 if __name__ == "__main__":

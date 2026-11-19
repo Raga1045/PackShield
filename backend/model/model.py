@@ -114,6 +114,7 @@ def predict(
             "entropy": 0.0,
             "mc_variance": 0.0,
             "is_ood": False,
+            "ood_reason": None,
         }
         if quantify_risk:
             try:
@@ -125,6 +126,14 @@ def predict(
                 )
             except Exception as u_err:
                 logger.warning(f"Uncertainty computation error: {u_err}")
+
+        is_ood = uncertainty_info.get("is_ood", False)
+        ood_reason = uncertainty_info.get("ood_reason")
+
+        # If Out-of-Distribution, override predicted condition to prevent automated false classification
+        if is_ood and uncertainty_info.get("uncertainty_score", 0.0) >= 0.99:
+            label = "OUT_OF_DISTRIBUTION"
+            confidence = 0.0
 
         # 2. Grad-CAM Explainability
         gradcam_info = None
@@ -155,7 +164,8 @@ def predict(
             label=label,
             confidence=confidence,
             uncertainty_score=uncertainty_info.get("uncertainty_score", 0.0),
-            is_ood=uncertainty_info.get("is_ood", False),
+            is_ood=is_ood,
+            ood_reason=ood_reason,
         )
 
         return {

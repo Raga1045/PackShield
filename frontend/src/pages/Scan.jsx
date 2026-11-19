@@ -75,7 +75,9 @@ const Scan = () => {
             setViewMode("gradcam");
           }
 
-          if (isFlagged) {
+          if (data.label.toUpperCase() === "OUT_OF_DISTRIBUTION") {
+            toast.error("Out-of-Distribution: Non-packaging object detected!", { icon: "⚠️" });
+          } else if (isFlagged) {
             toast.error("Safety Fallback: Scan flagged for human verification!", { icon: "🛡️" });
           } else if (data.label.toLowerCase() === "damaged") {
             toast.success("Damaged item automatically detected and logged.");
