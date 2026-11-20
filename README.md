@@ -63,12 +63,30 @@ Responsibilities include:
 This layer handles communication between the frontend and the AI model.
 
 Responsibilities include:
+Receiving image data and inspection requests from the frontend.
 
-- Receiving image data from the frontend.
-- Validating uploaded images.
-- Applying image preprocessing.
-- Managing API requests and responses.
-- Forwarding validated inputs to the AI inference pipeline.
+Validating uploaded images to ensure they are in supported formats.
+
+
+Checking image dimensions, file size and input validity.
+
+Applying image preprocessing, including resizing, normalization and format conversion as required by the AI model.
+
+Handling API requests and generating appropriate responses.
+
+Forwarding validated and preprocessed images to the AI inference pipeline.
+
+Managing communication between the frontend and backend AI components.
+
+Handling invalid inputs, processing failures and API errors.
+
+Returning classification results, confidence scores, uncertainty values and Grad-CAM heatmap data to the frontend.
+
+Managing inspection requests and maintaining a consistent response structure.
+
+Applying input-level security checks to prevent malformed or unsupported data from entering the inference pipeline.
+
+Supporting communication between the AI Core and the application layer.
 
 ### Tier 3: Trustworthy AI Core
 
